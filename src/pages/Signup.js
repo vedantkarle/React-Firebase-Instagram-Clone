@@ -20,7 +20,35 @@ const Register = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    const usernameExists = doesUsernameExist(username);
+    const usernameExists = await doesUsernameExist(username);
+    if (!usernameExists.length) {
+      try {
+        const createdUserResult = await firebase
+          .auth()
+          .createUserWithEmailAndPassword(email, password);
+
+        await createdUserResult.user.updateProfile({
+          displayName: username,
+        });
+
+        await firebase.firestore().collection("users").add({
+          userId: createdUserResult.user.uid,
+          username: username.toLowerCase(),
+          fullName,
+          emailAddress: email.toLowerCase(),
+          following: [],
+          dateCreated: Date.now(),
+        });
+        history.push(ROUTES.DASHBOARD);
+      } catch (error) {
+        setError(error.message);
+        setEmail("");
+        setFullName("");
+        setPassword("");
+      }
+    } else {
+      setError("This username is already taken!");
+    }
   };
 
   useEffect(() => {
