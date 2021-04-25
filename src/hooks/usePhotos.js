@@ -9,18 +9,19 @@ const usePhotos = () => {
 
   useEffect(() => {
     async function getTimelinePhotos() {
-      const followingUserIds = await getUser(user.uid).following;
+      const [{ following }] = await getUser(user.uid);
       let followedUserPhotos = [];
 
-      if (following.length > 0) {
-        followedUserPhotos = await getPhotos(user.uid, followingUserIds);
+      if (following?.length > 0) {
+        followedUserPhotos = await getPhotos(user.uid, following);
+        setPhotos(followedUserPhotos);
       }
     }
 
     if (user?.uid) {
       getTimelinePhotos();
     }
-  }, []);
+  }, [user.uid]);
 
   return { photos };
 };

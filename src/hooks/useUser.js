@@ -1,5 +1,4 @@
 import { useState, useEffect, useContext } from "react";
-import FirebaseContext from "../context/firebase";
 import UserContext from "../context/user";
 import { getUser } from "../services/firebase";
 
